@@ -111,8 +111,8 @@ public class LotteryMain extends Application {
                                          Spinner<Integer> secondNumberInput, Spinner<Integer> thirdNumberInput,
                                          Spinner<Integer> fourthNumberInput, Spinner<Integer> fifthNumberInput,
                                          Spinner<Integer> sixthNumberInput, GridPane grid) {
-        Set<Integer> randomNumbers = new HashSet<>();
-        Set<Integer> inputNumbers = new HashSet<>();
+        Set<Integer> randomNumbers = new HashSet<>(6);
+        Set<Integer> inputNumbers = new HashSet<>(6);
         runCheckRandomButton.setOnAction(e -> {
             inputNumbersToSet(inputNumbers, firstNumberInput, secondNumberInput, thirdNumberInput, fourthNumberInput,
                     fifthNumberInput, sixthNumberInput);
@@ -130,7 +130,7 @@ public class LotteryMain extends Application {
         });
     }
 
-    private GridPane setScoreToGrid(GridPane grid) {
+    private String returnFormatResults() {
         NumberFormat formatter = NumberFormat.getInstance();
         String result;
         if (counter % 1000000 == 0 && counter != 0) {
@@ -140,7 +140,11 @@ public class LotteryMain extends Application {
         } else {
             result = formatter.format(counter);
         }
-        Label counterLabel = new Label("Counter of draws: " + result + " times.");
+        return result;
+    }
+
+    private GridPane setScoreToGrid(GridPane grid) {
+        Label counterLabel = new Label("Counter of draws: " + returnFormatResults() + " times.");
         counterLabel.setPadding(new Insets(10));
         GridPane.setConstraints(counterLabel, 1, 9);
         grid.getChildren().add(counterLabel);
