@@ -1,9 +1,8 @@
 import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
@@ -30,6 +29,7 @@ public class LotteryMain extends Application {
 
     private Scene initializeHomeScene() {
         GridPane grid = new GridPane();
+        grid.setPadding(new Insets(10));
         grid = setStudentAddFormToGrid(grid);
         grid = setScoreToGrid(grid);
         int height = 300;
@@ -43,6 +43,7 @@ public class LotteryMain extends Application {
 
     private GridPane setStudentAddFormToGrid(GridPane grid) {
         Label labelInformation = new Label("Input six numbers from 1 to 49: ");
+        labelInformation.setPadding(new Insets(10));
 
         List<Integer> digits = IntStream.range(1, 50).boxed().collect(Collectors.toList());
         Collections.shuffle(digits);
@@ -54,29 +55,25 @@ public class LotteryMain extends Application {
         final Spinner<Integer> firstNumberInput = new Spinner<>();
         firstNumberInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 49,
                 defaultValuesInInput[0]));
-        firstNumberInput.setEditable(true);
         final Spinner<Integer> secondNumberInput = new Spinner<>();
         secondNumberInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 49,
                 defaultValuesInInput[1]));
-        secondNumberInput.setEditable(true);
         final Spinner<Integer> thirdNumberInput = new Spinner<>();
         thirdNumberInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 49,
                 defaultValuesInInput[2]));
-        thirdNumberInput.setEditable(true);
         final Spinner<Integer> fourthNumberInput = new Spinner<>();
         fourthNumberInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 49,
                 defaultValuesInInput[3]));
-        fourthNumberInput.setEditable(true);
         final Spinner<Integer> fifthNumberInput = new Spinner<>();
         fifthNumberInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 49,
                 defaultValuesInInput[4]));
-        fifthNumberInput.setEditable(true);
         final Spinner<Integer> sixthNumberInput = new Spinner<>();
         sixthNumberInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 49,
                 defaultValuesInInput[5]));
-        sixthNumberInput.setEditable(true);
 
         Button runCheckRandomButton = new Button("Check your luck");
+        runCheckRandomButton.setPrefSize(150, 30);
+        runCheckRandomButton.setCursor(Cursor.HAND);
 
         int row = 1;
         int col = 1;
@@ -98,6 +95,18 @@ public class LotteryMain extends Application {
         return grid;
     }
 
+    private boolean checkDuplicateValues(Set<Integer> inputNumbers) {
+        int numberOfUniqeValues = inputNumbers.size();
+        if (numberOfUniqeValues < 6) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Information");
+            alert.setHeaderText("Duplicate value!");
+            alert.setContentText("Enter unique values!");
+            alert.showAndWait();
+        }
+        return numberOfUniqeValues < 6;
+    }
+
     private void setActionToInputNumbers(Button runCheckRandomButton, Spinner<Integer> firstNumberInput,
                                          Spinner<Integer> secondNumberInput, Spinner<Integer> thirdNumberInput,
                                          Spinner<Integer> fourthNumberInput, Spinner<Integer> fifthNumberInput,
@@ -105,15 +114,16 @@ public class LotteryMain extends Application {
         Set<Integer> randomNumbers = new HashSet<>();
         Set<Integer> inputNumbers = new HashSet<>();
         runCheckRandomButton.setOnAction(e -> {
+            inputNumbersToSet(inputNumbers, firstNumberInput, secondNumberInput, thirdNumberInput, fourthNumberInput,
+                    fifthNumberInput, sixthNumberInput);
+            if (checkDuplicateValues(inputNumbers))
+                return;
             counter = 0;
-            inputNumbersToSet(inputNumbers, firstNumberInput, secondNumberInput, thirdNumberInput,
-                    fourthNumberInput, fifthNumberInput, sixthNumberInput);
             randomNumbersToSet(randomNumbers);
-            checkRandomNumbersWithInputNumbers(randomNumbers, inputNumbers);
             while (!checkRandomNumbersWithInputNumbers(randomNumbers, inputNumbers)) {
                 randomNumbers.clear();
-                counter++;
                 randomNumbersToSet(randomNumbers);
+                counter++;
             }
             setScoreToGrid(grid);
             refreshScene();
@@ -131,6 +141,7 @@ public class LotteryMain extends Application {
             result = formatter.format(counter);
         }
         Label counterLabel = new Label("Counter of draws: " + result + " times.");
+        counterLabel.setPadding(new Insets(10));
         GridPane.setConstraints(counterLabel, 1, 9);
         grid.getChildren().add(counterLabel);
 
