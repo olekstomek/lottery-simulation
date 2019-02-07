@@ -1,14 +1,13 @@
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.text.NumberFormat;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class LotteryMain extends Application {
     private int counter;
@@ -39,18 +38,37 @@ public class LotteryMain extends Application {
     private GridPane setStudentAddFormToGrid(GridPane grid) {
         Label labelInformation = new Label("Input six numbers from 1 to 49: ");
 
-        TextField firstNumberInput = new TextField();
-        firstNumberInput.setPromptText("Input unique number");
-        TextField secondNumberInput = new TextField();
-        secondNumberInput.setPromptText("Input unique number");
-        TextField thirdNumberInput = new TextField();
-        thirdNumberInput.setPromptText("Input unique number");
-        TextField fourthNumberInput = new TextField();
-        fourthNumberInput.setPromptText("Input unique number");
-        TextField fifthNumberInput = new TextField();
-        fifthNumberInput.setPromptText("Input unique number");
-        TextField sixthNumberInput = new TextField();
-        sixthNumberInput.setPromptText("Input unique number");
+        List<Integer> digits = IntStream.range(1, 50).boxed().collect(Collectors.toList());
+        Collections.shuffle(digits);
+        int[] defaultValuesInInput = new int[6];
+        for (int i = 0; i < 6; i++) {
+            defaultValuesInInput[i] = digits.get(i);
+        }
+
+        final Spinner<Integer> firstNumberInput = new Spinner<>();
+        firstNumberInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 49,
+                defaultValuesInInput[0]));
+        firstNumberInput.setEditable(true);
+        final Spinner<Integer> secondNumberInput = new Spinner<>();
+        secondNumberInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 49,
+                defaultValuesInInput[1]));
+        secondNumberInput.setEditable(true);
+        final Spinner<Integer> thirdNumberInput = new Spinner<>();
+        thirdNumberInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 49,
+                defaultValuesInInput[2]));
+        thirdNumberInput.setEditable(true);
+        final Spinner<Integer> fourthNumberInput = new Spinner<>();
+        fourthNumberInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 49,
+                defaultValuesInInput[3]));
+        fourthNumberInput.setEditable(true);
+        final Spinner<Integer> fifthNumberInput = new Spinner<>();
+        fifthNumberInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 49,
+                defaultValuesInInput[4]));
+        fifthNumberInput.setEditable(true);
+        final Spinner<Integer> sixthNumberInput = new Spinner<>();
+        sixthNumberInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 49,
+                defaultValuesInInput[5]));
+        sixthNumberInput.setEditable(true);
 
         Button runCheckRandomButton = new Button("Check your luck");
 
@@ -74,10 +92,10 @@ public class LotteryMain extends Application {
         return grid;
     }
 
-    private void setActionToInputNumbers(Button runCheckRandomButton, TextField firstNumberInput,
-                                         TextField secondNumberInput, TextField thirdNumberInput,
-                                         TextField fourthNumberInput, TextField fifthNumberInput,
-                                         TextField sixthNumberInput, GridPane grid) {
+    private void setActionToInputNumbers(Button runCheckRandomButton, Spinner<Integer> firstNumberInput,
+                                         Spinner<Integer> secondNumberInput, Spinner<Integer> thirdNumberInput,
+                                         Spinner<Integer> fourthNumberInput, Spinner<Integer> fifthNumberInput,
+                                         Spinner<Integer> sixthNumberInput, GridPane grid) {
         Set<Integer> randomNumbers = new HashSet<>();
         Set<Integer> inputNumbers = new HashSet<>();
         runCheckRandomButton.setOnAction(e -> {
@@ -106,7 +124,7 @@ public class LotteryMain extends Application {
         } else {
             result = formatter.format(counter);
         }
-        Label counterLabel = new Label("Counter of draws: " + result + " times");
+        Label counterLabel = new Label("Counter of draws: " + result + " times.");
         GridPane.setConstraints(counterLabel, 1, 9);
         grid.getChildren().add(counterLabel);
 
@@ -128,14 +146,14 @@ public class LotteryMain extends Application {
         }
     }
 
-    private void inputNumbersToSet(Set<Integer> inputNumbers, TextField firstNumberInput, TextField secondNumberInput,
-                                   TextField thirdNumberInput, TextField fourthNumberInput, TextField fifthNumberInput,
-                                   TextField sixthNumberInput) {
-            inputNumbers.add(Integer.parseInt(firstNumberInput.getText()));
-            inputNumbers.add(Integer.parseInt(secondNumberInput.getText()));
-            inputNumbers.add(Integer.parseInt(thirdNumberInput.getText()));
-            inputNumbers.add(Integer.parseInt(fourthNumberInput.getText()));
-            inputNumbers.add(Integer.parseInt(fifthNumberInput.getText()));
-            inputNumbers.add(Integer.parseInt(sixthNumberInput.getText()));
+    private void inputNumbersToSet(Set<Integer> inputNumbers, Spinner<Integer> firstNumberInput, Spinner<Integer> secondNumberInput,
+                                   Spinner<Integer> thirdNumberInput, Spinner<Integer> fourthNumberInput, Spinner<Integer> fifthNumberInput,
+                                   Spinner<Integer> sixthNumberInput) {
+        inputNumbers.add(firstNumberInput.getValue());
+        inputNumbers.add(secondNumberInput.getValue());
+        inputNumbers.add(thirdNumberInput.getValue());
+        inputNumbers.add(fourthNumberInput.getValue());
+        inputNumbers.add(fifthNumberInput.getValue());
+        inputNumbers.add(sixthNumberInput.getValue());
     }
 }
