@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 import java.text.NumberFormat;
 import java.util.Collections;
@@ -42,6 +43,19 @@ public class LotteryMain extends Application {
         primaryStage.setScene(initializeHomeScene());
     }
 
+    private <T> void commitEditorText(Spinner<T> spinner) {
+        if (!spinner.isEditable()) return;
+        String text = spinner.getEditor().getText();
+        SpinnerValueFactory<T> valueFactory = spinner.getValueFactory();
+        if (valueFactory != null) {
+            StringConverter<T> converter = valueFactory.getConverter();
+            if (converter != null) {
+                T value = converter.fromString(text);
+                valueFactory.setValue(value);
+            }
+        }
+    }
+
     private GridPane setAddFormToGrid(GridPane grid) {
         Label labelInformation = new Label("Input six numbers from 1 to 49: ");
         labelInformation.setPadding(new Insets(10));
@@ -56,21 +70,32 @@ public class LotteryMain extends Application {
         final Spinner<Integer> firstNumberInput = new Spinner<>();
         firstNumberInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 49,
                 defaultValuesInInput[0]));
+        commitValuesFromKeyboard(firstNumberInput);
+
         final Spinner<Integer> secondNumberInput = new Spinner<>();
         secondNumberInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 49,
                 defaultValuesInInput[1]));
+        commitValuesFromKeyboard(secondNumberInput);
+
         final Spinner<Integer> thirdNumberInput = new Spinner<>();
         thirdNumberInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 49,
                 defaultValuesInInput[2]));
+        commitValuesFromKeyboard(thirdNumberInput);
+
         final Spinner<Integer> fourthNumberInput = new Spinner<>();
         fourthNumberInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 49,
                 defaultValuesInInput[3]));
+        commitValuesFromKeyboard(fourthNumberInput);
+
         final Spinner<Integer> fifthNumberInput = new Spinner<>();
         fifthNumberInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 49,
                 defaultValuesInInput[4]));
+        commitValuesFromKeyboard(fifthNumberInput);
+
         final Spinner<Integer> sixthNumberInput = new Spinner<>();
         sixthNumberInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 49,
                 defaultValuesInInput[5]));
+        commitValuesFromKeyboard(sixthNumberInput);
 
         Button runCheckRandomButton = new Button("Check your luck");
         runCheckRandomButton.setPrefSize(150, 30);
@@ -100,6 +125,14 @@ public class LotteryMain extends Application {
                 runRandomDefaultValuesButton);
 
         return grid;
+    }
+
+    private void commitValuesFromKeyboard(Spinner<Integer> firstNumberInput) {
+        firstNumberInput.setEditable(true);
+        firstNumberInput.focusedProperty().addListener((s, ov, nv) -> {
+            if (nv) return;
+            commitEditorText(firstNumberInput);
+        });
     }
 
     private boolean checkDuplicateValues(Set<Integer> inputNumbers) {
