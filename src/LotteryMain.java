@@ -8,10 +8,7 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 import java.text.NumberFormat;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -36,6 +33,7 @@ public class LotteryMain extends Application {
         grid = setScoreToGrid(grid);
         int height = 350;
         int width = 250;
+
         return new Scene(grid, width, height);
     }
 
@@ -43,10 +41,32 @@ public class LotteryMain extends Application {
         primaryStage.setScene(initializeHomeScene());
     }
 
+    private static boolean isNumericString(String input) {
+        boolean result = false;
+
+        if (input != null && input.length() > 0) {
+            char[] charArray = input.toCharArray();
+
+            for (char c : charArray) {
+                if (c >= '0' && c <= '9') {
+                    result = true;
+                } else {
+                    result = false;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
     private <T> void commitEditorText(Spinner<T> spinner) {
-        if (!spinner.isEditable()) return;
         String text = spinner.getEditor().getText();
         SpinnerValueFactory<T> valueFactory = spinner.getValueFactory();
+
+        if (!isNumericString(text)) {
+            return;
+        }
+
         if (valueFactory != null) {
             StringConverter<T> converter = valueFactory.getConverter();
             if (converter != null) {
@@ -62,6 +82,7 @@ public class LotteryMain extends Application {
 
         List<Integer> digits = IntStream.range(1, 50).boxed().collect(Collectors.toList());
         Collections.shuffle(digits);
+
         int[] defaultValuesInInput = new int[6];
         for (int i = 0; i < 6; i++) {
             defaultValuesInInput[i] = digits.get(i);
@@ -117,8 +138,8 @@ public class LotteryMain extends Application {
         GridPane.setConstraints(runCheckRandomButton, col, row++);
         GridPane.setConstraints(runRandomDefaultValuesButton, col, row++);
 
-        setActionToInputNumbers(runRandomDefaultValuesButton, runCheckRandomButton, firstNumberInput, secondNumberInput, thirdNumberInput,
-                fourthNumberInput, fifthNumberInput, sixthNumberInput, grid);
+        setActionToInputNumbers(runRandomDefaultValuesButton, runCheckRandomButton, firstNumberInput, secondNumberInput,
+                thirdNumberInput, fourthNumberInput, fifthNumberInput, sixthNumberInput, grid);
 
         grid.getChildren().addAll(labelInformation, firstNumberInput, secondNumberInput, thirdNumberInput,
                 fourthNumberInput, fifthNumberInput, sixthNumberInput, runCheckRandomButton,
@@ -147,7 +168,8 @@ public class LotteryMain extends Application {
         return numberOfUniqueValues < 6;
     }
 
-    private void setActionToInputNumbers(Button runRandomDefaultValuesButton, Button runCheckRandomButton, Spinner<Integer> firstNumberInput,
+    private void setActionToInputNumbers(Button runRandomDefaultValuesButton, Button runCheckRandomButton,
+                                         Spinner<Integer> firstNumberInput,
                                          Spinner<Integer> secondNumberInput, Spinner<Integer> thirdNumberInput,
                                          Spinner<Integer> fourthNumberInput, Spinner<Integer> fifthNumberInput,
                                          Spinner<Integer> sixthNumberInput, GridPane grid) {
@@ -162,6 +184,7 @@ public class LotteryMain extends Application {
                 return;
             counter = 0;
             tempInputNumbers.addAll(inputNumbers);
+            tempInputNumbers = new TreeSet<>(tempInputNumbers);
             randomNumbersToSet(randomNumbers);
             while (!checkRandomNumbersWithInputNumbers(randomNumbers, inputNumbers)) {
                 randomNumbers.clear();
@@ -212,8 +235,9 @@ public class LotteryMain extends Application {
         }
     }
 
-    private void inputNumbersToSet(Set<Integer> inputNumbers, Spinner<Integer> firstNumberInput, Spinner<Integer> secondNumberInput,
-                                   Spinner<Integer> thirdNumberInput, Spinner<Integer> fourthNumberInput, Spinner<Integer> fifthNumberInput,
+    private void inputNumbersToSet(Set<Integer> inputNumbers, Spinner<Integer> firstNumberInput,
+                                   Spinner<Integer> secondNumberInput, Spinner<Integer> thirdNumberInput,
+                                   Spinner<Integer> fourthNumberInput, Spinner<Integer> fifthNumberInput,
                                    Spinner<Integer> sixthNumberInput) {
         inputNumbers.add(firstNumberInput.getValue());
         inputNumbers.add(secondNumberInput.getValue());
