@@ -75,6 +75,10 @@ public class LotteryMain extends Application {
         runCheckRandomButton.setPrefSize(150, 30);
         runCheckRandomButton.setCursor(Cursor.HAND);
 
+        Button runRandomDefaultValuesButton = new Button("Random new default values");
+        runRandomDefaultValuesButton.setPrefSize(150, 30);
+        runRandomDefaultValuesButton.setCursor(Cursor.HAND);
+
         int row = 1;
         int col = 1;
         GridPane.setConstraints(labelInformation, col, row++);
@@ -85,12 +89,14 @@ public class LotteryMain extends Application {
         GridPane.setConstraints(fifthNumberInput, col, row++);
         GridPane.setConstraints(sixthNumberInput, col, row++);
         GridPane.setConstraints(runCheckRandomButton, col, row++);
+        GridPane.setConstraints(runRandomDefaultValuesButton, col, row++);
 
-        setActionToInputNumbers(runCheckRandomButton, firstNumberInput, secondNumberInput, thirdNumberInput,
+        setActionToInputNumbers(runRandomDefaultValuesButton, runCheckRandomButton, firstNumberInput, secondNumberInput, thirdNumberInput,
                 fourthNumberInput, fifthNumberInput, sixthNumberInput, grid);
 
         grid.getChildren().addAll(labelInformation, firstNumberInput, secondNumberInput, thirdNumberInput,
-                fourthNumberInput, fifthNumberInput, sixthNumberInput, runCheckRandomButton);
+                fourthNumberInput, fifthNumberInput, sixthNumberInput, runCheckRandomButton,
+                runRandomDefaultValuesButton);
 
         return grid;
     }
@@ -107,12 +113,15 @@ public class LotteryMain extends Application {
         return numberOfUniqeValues < 6;
     }
 
-    private void setActionToInputNumbers(Button runCheckRandomButton, Spinner<Integer> firstNumberInput,
+    private void setActionToInputNumbers(Button runRandomDefaultValuesButton, Button runCheckRandomButton, Spinner<Integer> firstNumberInput,
                                          Spinner<Integer> secondNumberInput, Spinner<Integer> thirdNumberInput,
                                          Spinner<Integer> fourthNumberInput, Spinner<Integer> fifthNumberInput,
                                          Spinner<Integer> sixthNumberInput, GridPane grid) {
         Set<Integer> randomNumbers = new HashSet<>(6);
         Set<Integer> inputNumbers = new HashSet<>(6);
+
+        runRandomDefaultValuesButton.setOnAction(e -> setStudentAddFormToGrid(grid));
+
         runCheckRandomButton.setOnAction(e -> {
             inputNumbersToSet(inputNumbers, firstNumberInput, secondNumberInput, thirdNumberInput, fourthNumberInput,
                     fifthNumberInput, sixthNumberInput);
@@ -146,7 +155,7 @@ public class LotteryMain extends Application {
     private GridPane setScoreToGrid(GridPane grid) {
         Label counterLabel = new Label("Counter of draws: " + returnFormatResults() + " times.");
         counterLabel.setPadding(new Insets(10));
-        GridPane.setConstraints(counterLabel, 1, 9);
+        GridPane.setConstraints(counterLabel, 1, 11);
         grid.getChildren().add(counterLabel);
 
         return grid;
