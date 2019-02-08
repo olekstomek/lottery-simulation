@@ -17,6 +17,7 @@ import java.util.stream.IntStream;
 public class LotteryMain extends Application {
     private int counter;
     private Stage primaryStage;
+    private Set<Integer> tempInputNumbers = new HashSet<>(6);
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -30,9 +31,9 @@ public class LotteryMain extends Application {
     private Scene initializeHomeScene() {
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(10));
-        grid = setStudentAddFormToGrid(grid);
+        grid = setAddFormToGrid(grid);
         grid = setScoreToGrid(grid);
-        int height = 300;
+        int height = 350;
         int width = 250;
         return new Scene(grid, width, height);
     }
@@ -41,7 +42,7 @@ public class LotteryMain extends Application {
         primaryStage.setScene(initializeHomeScene());
     }
 
-    private GridPane setStudentAddFormToGrid(GridPane grid) {
+    private GridPane setAddFormToGrid(GridPane grid) {
         Label labelInformation = new Label("Input six numbers from 1 to 49: ");
         labelInformation.setPadding(new Insets(10));
 
@@ -102,15 +103,15 @@ public class LotteryMain extends Application {
     }
 
     private boolean checkDuplicateValues(Set<Integer> inputNumbers) {
-        int numberOfUniqeValues = inputNumbers.size();
-        if (numberOfUniqeValues < 6) {
+        int numberOfUniqueValues = inputNumbers.size();
+        if (numberOfUniqueValues < 6) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Information");
             alert.setHeaderText("Duplicate value!");
             alert.setContentText("Enter unique values!");
             alert.showAndWait();
         }
-        return numberOfUniqeValues < 6;
+        return numberOfUniqueValues < 6;
     }
 
     private void setActionToInputNumbers(Button runRandomDefaultValuesButton, Button runCheckRandomButton, Spinner<Integer> firstNumberInput,
@@ -119,8 +120,7 @@ public class LotteryMain extends Application {
                                          Spinner<Integer> sixthNumberInput, GridPane grid) {
         Set<Integer> randomNumbers = new HashSet<>(6);
         Set<Integer> inputNumbers = new HashSet<>(6);
-
-        runRandomDefaultValuesButton.setOnAction(e -> setStudentAddFormToGrid(grid));
+        runRandomDefaultValuesButton.setOnAction(e -> setAddFormToGrid(grid));
 
         runCheckRandomButton.setOnAction(e -> {
             inputNumbersToSet(inputNumbers, firstNumberInput, secondNumberInput, thirdNumberInput, fourthNumberInput,
@@ -128,6 +128,7 @@ public class LotteryMain extends Application {
             if (checkDuplicateValues(inputNumbers))
                 return;
             counter = 0;
+            tempInputNumbers.addAll(inputNumbers);
             randomNumbersToSet(randomNumbers);
             while (!checkRandomNumbersWithInputNumbers(randomNumbers, inputNumbers)) {
                 randomNumbers.clear();
@@ -136,6 +137,7 @@ public class LotteryMain extends Application {
             }
             setScoreToGrid(grid);
             refreshScene();
+            tempInputNumbers.clear();
         });
     }
 
@@ -153,7 +155,8 @@ public class LotteryMain extends Application {
     }
 
     private GridPane setScoreToGrid(GridPane grid) {
-        Label counterLabel = new Label("Counter of draws: " + returnFormatResults() + " times.");
+        Label counterLabel = new Label("Counter of draws: " + returnFormatResults() + " times\nfor values: " +
+                tempInputNumbers);
         counterLabel.setPadding(new Insets(10));
         GridPane.setConstraints(counterLabel, 1, 11);
         grid.getChildren().add(counterLabel);
