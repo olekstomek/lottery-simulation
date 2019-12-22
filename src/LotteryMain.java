@@ -21,12 +21,17 @@ public class LotteryMain extends Application {
     private Set<Integer> tempFoundItemInputNumbers = new HashSet<>();
     private int previousTempFoundItemInputNumbers = 0;
     private TextArea textArea = new TextArea();
-    private boolean firstRun = false;
+    private boolean firstRunApp = false;
+    private boolean firstRunDetails = true;
     private int theNumberOfOccurrencesOfHitsForOne;
     private int theNumberOfOccurrencesOfHitsForTwo;
     private int theNumberOfOccurrencesOfHitsForThree;
     private int theNumberOfOccurrencesOfHitsForFour;
     private int theNumberOfOccurrencesOfHitsForFive;
+
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -40,8 +45,8 @@ public class LotteryMain extends Application {
     private Scene initializeHomeScene() {
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(10));
-        grid = setAddFormToGrid(grid);
-        grid = setScoreToGrid(grid);
+        setAddFormToGrid(grid);
+        setScoreToGrid(grid);
         int height = 350;
         int width = 250;
 
@@ -87,7 +92,7 @@ public class LotteryMain extends Application {
         }
     }
 
-    private GridPane setAddFormToGrid(GridPane grid) {
+    private void setAddFormToGrid(GridPane grid) {
         Label labelInformation = new Label("Input six numbers from 1 to 49: ");
         labelInformation.setPadding(new Insets(10));
 
@@ -141,7 +146,7 @@ public class LotteryMain extends Application {
         showDetails.setPrefSize(150, 30);
         showDetails.setCursor(Cursor.HAND);
 
-        if (!firstRun) {
+        if (!firstRunApp) {
             showDetails.setDisable(true);
         } else {
             showDetails.setDisable(false);
@@ -167,7 +172,6 @@ public class LotteryMain extends Application {
                 fourthNumberInput, fifthNumberInput, sixthNumberInput, runCheckRandomButton,
                 runRandomDefaultValuesButton, showDetails);
 
-        return grid;
     }
 
     private void commitValuesFromKeyboard(Spinner<Integer> numberInput) {
@@ -201,18 +205,7 @@ public class LotteryMain extends Application {
         showDetails.setOnAction(e -> {
 
             StackPane secondaryLayout = new StackPane();
-            textArea.appendText(
-                    "\nThe number of occurrences of hits for one number: "
-                            + returnFormatResults(theNumberOfOccurrencesOfHitsForOne) +
-                            "\nThe number of occurrences of hits for a set of two numbers: "
-                            + returnFormatResults(theNumberOfOccurrencesOfHitsForTwo) +
-                            "\nThe number of occurrences of hits for a set of three numbers: "
-                            + returnFormatResults(theNumberOfOccurrencesOfHitsForThree) +
-                            "\nThe number of occurrences of hits for a set of four numbers: "
-                            + returnFormatResults(theNumberOfOccurrencesOfHitsForFour) +
-                            "\nThe number of occurrences of hits for a set of five numbers: "
-                            + returnFormatResults(theNumberOfOccurrencesOfHitsForFive));
-            textArea.appendText("\n---------------------\n");
+            addNumberOfOccurencesOfHitsForNumberToDetails();
             secondaryLayout.getChildren().add(textArea);
 
             Scene secondScene = new Scene(secondaryLayout, 450, 250);
@@ -224,8 +217,6 @@ public class LotteryMain extends Application {
             newWindow.initModality(Modality.WINDOW_MODAL);
             newWindow.initOwner(primaryStage);
             newWindow.show();
-
-
         });
 
         runCheckRandomButton.setOnAction(e -> {
@@ -239,15 +230,34 @@ public class LotteryMain extends Application {
             tempInputNumbers.addAll(inputNumbers);
             tempInputNumbers = new TreeSet<>(tempInputNumbers);
             randomNumbersToSet(randomNumbers);
+            textArea.appendText("\n---------------------\nResults for numbers: " + inputNumbers + "\n");
             while (!checkRandomNumbersWithInputNumbers(randomNumbers, inputNumbers)) {
                 randomNumbers.clear();
                 randomNumbersToSet(randomNumbers);
                 ++counter;
             }
+            addNumberOfOccurencesOfHitsForNumberToDetails();
             setScoreToGrid(grid);
             refreshScene();
             tempInputNumbers.clear();
         });
+    }
+
+    private void addNumberOfOccurencesOfHitsForNumberToDetails() {
+        if (firstRunDetails) {
+            textArea.appendText(
+                    "\nThe number of occurrences of hits for one number: "
+                            + returnFormatResults(theNumberOfOccurrencesOfHitsForOne) +
+                            "\nThe number of occurrences of hits for a set of two numbers: "
+                            + returnFormatResults(theNumberOfOccurrencesOfHitsForTwo) +
+                            "\nThe number of occurrences of hits for a set of three numbers: "
+                            + returnFormatResults(theNumberOfOccurrencesOfHitsForThree) +
+                            "\nThe number of occurrences of hits for a set of four numbers: "
+                            + returnFormatResults(theNumberOfOccurrencesOfHitsForFour) +
+                            "\nThe number of occurrences of hits for a set of five numbers: "
+                            + returnFormatResults(theNumberOfOccurrencesOfHitsForFive));
+            firstRunDetails = false;
+        }
     }
 
     private void resetNumberOfOccurrences() {
@@ -271,21 +281,16 @@ public class LotteryMain extends Application {
         return result;
     }
 
-    private GridPane setScoreToGrid(GridPane grid) {
+    private void setScoreToGrid(GridPane grid) {
         Label counterLabel = new Label("Counter of draws: " + returnFormatResults(counter) + "\ntimes for values: "
                 + tempInputNumbers);
         counterLabel.setPadding(new Insets(10));
         GridPane.setConstraints(counterLabel, 1, 11);
         grid.getChildren().add(counterLabel);
-
-        return grid;
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 
     private boolean checkRandomNumbersWithInputNumbers(Set<Integer> randomNumbers, Set<Integer> inputNumbers) {
+        firstRunDetails = true;
         for (int r : inputNumbers) {
             if (randomNumbers.contains(r)) {
                 tempFoundItemInputNumbers.add(r);
@@ -305,7 +310,7 @@ public class LotteryMain extends Application {
             previousTempFoundItemInputNumbers = 0;
         }
 
-        firstRun = true;
+        firstRunApp = true;
 
         return randomNumbers.containsAll(inputNumbers);
     }

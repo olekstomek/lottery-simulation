@@ -40,4 +40,22 @@ The values could be: `4, 11, 13, 30` or / and `13, 49, 43, 11` or / and `30, 4, 
 ---
 _Remember that depending on the power of your machine and luck in the draw, the draw process can take up to several seconds._
 
+Example of full details"
+```$xslt
+---------------------
+Results for numbers: [8, 17, 2, 21, 13, 14]
+Found 1 values. The values: [14] hit after the 4 attempt
+Found 2 values. The values: [17, 8] hit after the 11 attempt
+Found 3 values. The values: [17, 2, 14] hit after the 178 attempt
+Found 4 values. The values: [17, 2, 21, 13] hit after the 3 770 attempt
+Found 5 values. The values: [17, 2, 21, 13, 14] hit after the 34 838 attempt
+Found 6 values. The values: [17, 2, 21, 8, 13, 14] hit after the 52 494 109 attempt
+
+The number of occurrences of hits for one number: 21 673 553
+The number of occurrences of hits for a set of two numbers: 6 954 432
+The number of occurrences of hits for a set of three numbers: 925 928
+The number of occurrences of hits for a set of four numbers: 50 832
+The number of occurrences of hits for a set of five numbers: 943
+``` 
+
 Have fun!
